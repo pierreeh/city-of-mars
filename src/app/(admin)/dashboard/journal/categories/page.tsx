@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { db } from "@/lib/db";
 import FormCreate from "./FormCreate";
 
@@ -9,6 +11,9 @@ type JournalCategories = {
 
 export default async function JournalCategories() {
   const journalCategories = await db.journalCategories.findMany({
+    orderBy: {
+      createdAt: "asc",
+    },
     select: {
       id: true,
       name: true,
@@ -22,7 +27,10 @@ export default async function JournalCategories() {
 
       <ul>
         {journalCategories.map((j: JournalCategories) => (
-          <li key={j.id}>{j.name}</li>
+          <li key={j.id}>
+            <Link href={`/dashboard/journal/categories/${j.id}`}>{j.name}</Link>
+            <span>{j.published ? "eye_opened" : "eye_closed"}</span>
+          </li>
         ))}
       </ul>
 

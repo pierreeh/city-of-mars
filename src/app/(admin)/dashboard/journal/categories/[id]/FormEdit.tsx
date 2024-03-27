@@ -1,28 +1,40 @@
 "use client";
 
 import { useState } from "react";
-import z from "zod";
+import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 
 import { JournalCategoriesSchema } from "@/schemas/journal/JournalCategoriesSchema";
 
-type JournalCategories = z.infer<typeof JournalCategoriesSchema>;
+type JournalCategory = {
+  id: string;
+  name: string;
+  description: string;
+  published: boolean;
+};
 
-export default function FormCreate() {
+type JournalCategoryEdit = z.infer<typeof JournalCategoriesSchema>;
+
+export default function FormEdit({
+  id,
+  name,
+  description,
+  published,
+}: JournalCategory) {
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors, isSubmitting },
-  } = useForm<JournalCategories>({
+  } = useForm<JournalCategoryEdit>({
     resolver: zodResolver(JournalCategoriesSchema),
+    defaultValues: { name, description, published },
   });
   const router = useRouter();
   const [hasErrors, setErrors] = useState();
 
-  async function onSubmit(data: JournalCategories) {
+  async function onSubmit(data: JournalCategoryEdit) {
     try {
       const body = JSON.stringify({
         name: data.name,
@@ -31,8 +43,8 @@ export default function FormCreate() {
       });
 
       const res = await (
-        await fetch("/api/dashboard/journal/categories/post", {
-          method: "POST",
+        await fetch(`/api/dashboard/journal/categories/${id}`, {
+          method: "PATCH",
           headers: {
             "Content-Type": "application/json",
           },
@@ -44,7 +56,7 @@ export default function FormCreate() {
         setErrors(res.message);
       }
 
-      reset();
+      router.push("/dashboard/journal/categories");
       router.refresh();
       return res;
     } catch (e) {
@@ -70,16 +82,11 @@ export default function FormCreate() {
 
       <label htmlFor="published">
         Published
-        <input
-          type="checkbox"
-          id="published"
-          defaultChecked
-          {...register("published")}
-        />
+        <input type="checkbox" id="published" {...register("published")} />
       </label>
 
       <button type="submit" disabled={isSubmitting}>
-        Create
+        Edit
       </button>
     </form>
   );

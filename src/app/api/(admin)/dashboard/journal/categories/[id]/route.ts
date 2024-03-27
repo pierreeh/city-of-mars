@@ -1,15 +1,17 @@
-import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+import { NextRequest, NextResponse } from "next/server";
 
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { db } from "@/lib/db";
-import slugify from "@/lib/slugify";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { JournalCategoriesSchema } from "@/schemas/journal/JournalCategoriesSchema";
 
-export async function JournalCategoryPost(req: Request) {
+export async function journalCategoryPatch(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   const session = await getServerSession(authOptions);
 
-  if (req.method !== "POST") {
+  if (req.method !== "PATCH") {
     return new NextResponse(
       JSON.stringify({ message: `Method ${req.method} not allowed.` }),
       { status: 405 }
@@ -31,11 +33,11 @@ export async function JournalCategoryPost(req: Request) {
       );
     }
 
-    const journalCategory = await db.journalCategories.create({
+    const journalCategory = await db.journalCategories.update({
+      where: { id: params.id },
       data: {
         userId: session?.user.id,
         name: res.data.name,
-        slug: slugify(res.data.name),
         description: res.data.description,
         published: res.data.published,
       },
@@ -44,7 +46,7 @@ export async function JournalCategoryPost(req: Request) {
     return new NextResponse(
       JSON.stringify({ journalCategory, message: "OK" }),
       {
-        status: 201,
+        status: 200,
       }
     );
   } catch (e: any) {
@@ -54,4 +56,4 @@ export async function JournalCategoryPost(req: Request) {
   }
 }
 
-export { JournalCategoryPost as POST };
+export { journalCategoryPatch as PATCH };
