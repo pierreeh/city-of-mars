@@ -23,7 +23,7 @@ export default async function JournalCategories() {
 
   return (
     <section>
-      <h1>Journal Categories</h1>
+      <h1>{journalCategories.length} Journal Categories</h1>
 
       <ul>
         {journalCategories.map((j: JournalCategories) => (

@@ -24,7 +24,7 @@ export async function JournalCategoryPost(req: Request) {
       const { errors } = res.error;
 
       return new NextResponse(
-        JSON.stringify({ error: { message: "Invalid request", errors } }),
+        JSON.stringify({ message: "Invalid request", errors }),
         {
           status: 400,
         }

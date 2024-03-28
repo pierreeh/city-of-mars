@@ -10,6 +10,9 @@ export default function Sidebar() {
             <li>
               <Link href="/dashboard/journal/categories">Categories</Link>
             </li>
+            <li>
+              <Link href="/dashboard/journal/articles">Articles</Link>
+            </li>
           </ul>
         </li>
       </ul>

@@ -1,17 +1,15 @@
+import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { NextRequest, NextResponse } from "next/server";
 
-import { db } from "@/lib/db";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { JournalCategoriesSchema } from "@/schemas/journal/JournalCategoriesSchema";
+import { JournalArticlesSchema } from "@/schemas/journal/JournalArticlesSchema";
+import { db } from "@/lib/db";
+import slugify from "@/lib/slugify";
 
-export async function journalCategoryPatch(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function JournalArticlePost(req: Request) {
   const session = await getServerSession(authOptions);
 
-  if (req.method !== "PATCH") {
+  if (req.method !== "POST") {
     return new NextResponse(
       JSON.stringify({ message: `Method ${req.method} not allowed.` }),
       { status: 405 }
@@ -20,7 +18,7 @@ export async function journalCategoryPatch(
 
   try {
     const response = await req.json();
-    const res = JournalCategoriesSchema.safeParse(response);
+    const res = JournalArticlesSchema.safeParse(response);
 
     if (!res.success) {
       const { errors } = res.error;
@@ -33,22 +31,20 @@ export async function journalCategoryPatch(
       );
     }
 
-    const journalCategory = await db.journalCategories.update({
-      where: { id: params.id },
+    const journalArticle = await db.journalArticles.create({
       data: {
         userId: session?.user.id,
+        categoryId: res.data.categoryId,
         name: res.data.name,
-        description: res.data.description,
+        slug: slugify(res.data.name),
+        body: res.data.body,
         published: res.data.published,
       },
     });
 
-    return new NextResponse(
-      JSON.stringify({ journalCategory, message: "OK" }),
-      {
-        status: 200,
-      }
-    );
+    return new NextResponse(JSON.stringify({ journalArticle, message: "OK" }), {
+      status: 201,
+    });
   } catch (e: any) {
     return new NextResponse(JSON.stringify({ message: e.message }), {
       status: e.statusCode || 500,
@@ -56,4 +52,4 @@ export async function journalCategoryPatch(
   }
 }
 
-export { journalCategoryPatch as PATCH };
+export { JournalArticlePost as POST };

@@ -64,6 +64,7 @@ model User {
   accounts          Account[]
   sessions          Session[]
   JournalCategories JournalCategories[]
+  JournalArticles   JournalArticles[]
 
   @@map("user")
 }
@@ -89,7 +90,25 @@ model JournalCategories {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  user User @relation(fields: [userId], references: [id])
+  user            User              @relation(fields: [userId], references: [id])
+  JournalArticles JournalArticles[]
 
   @@map("journal_categories")
+}
+
+model JournalArticles {
+  id         String   @id @default(cuid())
+  userId     String   @map("user_id")
+  categoryId String   @map("category_id")
+  name       String
+  slug       String
+  body       String   @db.Text
+  published  Boolean
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  user              User              @relation(fields: [userId], references: [id])
+  journalCategories JournalCategories @relation(fields: [categoryId], references: [id])
+
+  @@map("journal_articles")
 }
