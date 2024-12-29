@@ -1,12 +1,12 @@
-import { useContext, useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useContext, useState } from "react";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-import { auth } from "@/lib/db";
 import { AuthContext } from "@/contexts/AuthContext";
+import { auth } from "@/lib/db";
 import {
   Form,
   FormControl,
@@ -35,6 +35,11 @@ export default function Register() {
   const navigate = useNavigate();
   const [errors, setErrors] = useState(null);
   const [isLoading, setLoading] = useState(false);
+
+  if (user) {
+    return <Navigate to="/" />;
+  }
+
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -63,12 +68,6 @@ export default function Register() {
       setLoading(false);
     }
   }
-
-  useEffect(() => {
-    if (!!user) {
-      navigate("/", { replace: true });
-    }
-  }, []);
 
   return (
     <section>

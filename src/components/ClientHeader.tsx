@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { User } from "lucide-react";
 
@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export default function ClientHeader() {
-  const { user, setUser, loading, setLoading } = useContext(AuthContext);
+  const { user, setUser, setLoading } = useContext(AuthContext);
   const navigate = useNavigate();
 
   async function logout() {
@@ -43,22 +43,37 @@ export default function ClientHeader() {
         {!user ? (
           <DropdownMenuContent>
             <DropdownMenuItem>
-              <span onClick={() => navigate("/login")}>Login</span>
+              <span
+                onClick={() => navigate("/login")}
+                className="cursor-pointer block w-full"
+              >
+                Login
+              </span>
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <span onClick={() => navigate("/register")}>Register</span>
+              <span
+                onClick={() => navigate("/register")}
+                className="cursor-pointer block w-full"
+              >
+                Register
+              </span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         ) : (
           <DropdownMenuContent>
             <DropdownMenuItem>
-              <span onClick={() => navigate("/profile")}>Profile</span>
+              <span
+                onClick={() => navigate("/profile")}
+                className="cursor-pointer block w-full"
+              >
+                Profile
+              </span>
             </DropdownMenuItem>
-            {!loading && (
-              <DropdownMenuItem>
-                <span onClick={logout}>Logout</span>
-              </DropdownMenuItem>
-            )}
+            <DropdownMenuItem>
+              <span onClick={logout} className="cursor-pointer block w-full">
+                Logout
+              </span>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         )}
       </DropdownMenu>

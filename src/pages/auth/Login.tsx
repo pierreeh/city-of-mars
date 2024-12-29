@@ -1,10 +1,10 @@
-import { useContext, useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useContext, useState } from "react";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { signInWithEmailAndPassword } from "firebase/auth";
 
-import { auth } from "@/lib/db";
 import { AuthContext } from "@/contexts/AuthContext";
+import { auth } from "@/lib/db";
 import {
   Form,
   FormControl,
@@ -26,6 +26,11 @@ export default function Login() {
   const navigate = useNavigate();
   const [errors, setErrors] = useState(null);
   const [isLoading, setLoading] = useState(false);
+
+  if (user) {
+    return <Navigate to="/" />;
+  }
+
   const form = useForm({
     defaultValues: {
       email: "",
@@ -53,12 +58,6 @@ export default function Login() {
       setLoading(false);
     }
   }
-
-  useEffect(() => {
-    if (!!user) {
-      navigate("/", { replace: true });
-    }
-  }, []);
 
   return (
     <section>
