@@ -26,13 +26,6 @@ export default function Login() {
   const navigate = useNavigate();
   const [errors, setErrors] = useState(null);
   const [isLoading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (!!user) {
-      navigate("/", { replace: true });
-    }
-  }, []);
-
   const form = useForm({
     defaultValues: {
       email: "",
@@ -60,6 +53,12 @@ export default function Login() {
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+    if (!!user) {
+      navigate("/", { replace: true });
+    }
+  }, []);
 
   return (
     <section>

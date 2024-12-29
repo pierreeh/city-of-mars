@@ -35,13 +35,6 @@ export default function Register() {
   const navigate = useNavigate();
   const [errors, setErrors] = useState(null);
   const [isLoading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (!!user) {
-      navigate("/", { replace: true });
-    }
-  }, []);
-
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -70,6 +63,12 @@ export default function Register() {
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+    if (!!user) {
+      navigate("/", { replace: true });
+    }
+  }, []);
 
   return (
     <section>
